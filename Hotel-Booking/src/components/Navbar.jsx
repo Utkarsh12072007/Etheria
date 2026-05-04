@@ -7,9 +7,20 @@ const navItems = [
   { label: "About", href: "#about" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onNavClick, onGetStarted }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleNavClick = (event, item) => {
+    event.preventDefault();
+    onNavClick?.(item.href);
+    setOpen(false);
+  };
+
+  const handleGetStarted = () => {
+    onGetStarted?.();
+    setOpen(false);
+  };
 
   useEffect(() => {
     const f = () => setScrolled(window.scrollY > 20);
@@ -49,6 +60,7 @@ export default function Navbar() {
       }`}>
         {navItems.map((item) => (
           <a key={item.label} href={item.href}
+            onClick={(event) => handleNavClick(event, item)}
             className={`group relative px-4 py-1.5 text-sm rounded-full transition-all duration-300 hover:-translate-y-[1px] ${
               scrolled
                 ? "text-zinc-700 hover:text-black"
@@ -66,7 +78,7 @@ export default function Navbar() {
         ))}
       </div>
 
-      <button className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold relative overflow-hidden transition-all duration-300 group ${
+      <button onClick={handleGetStarted} className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold relative overflow-hidden transition-all duration-300 group ${
         scrolled
           ? "bg-black text-white border border-black shadow-[0_10px_24px_rgba(0,0,0,0.2)]"
           : "bg-white/90 text-black border border-white/30"
@@ -103,7 +115,7 @@ export default function Navbar() {
           {navItems.map((item) => (
             <a key={item.label}
               href={item.href}
-              onClick={() => setOpen(false)}
+              onClick={(event) => handleNavClick(event, item)}
               className={`px-4 py-2.5 rounded-lg text-sm transition-all duration-300 ${
                 scrolled
                   ? "text-zinc-800 hover:bg-black/5"
@@ -113,7 +125,7 @@ export default function Navbar() {
               {item.label}
             </a>
           ))}
-          <button className="mt-3 px-5 py-2.5 rounded-full bg-white text-black text-sm font-semibold w-fit transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+          <button onClick={handleGetStarted} className="mt-3 px-5 py-2.5 rounded-full bg-white text-black text-sm font-semibold w-fit transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
             Get started
           </button>
         </div>
