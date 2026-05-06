@@ -1,53 +1,56 @@
-import cover from "../assets/homepagecover.jpeg";
+import fallbackHotelImage from "../assets/homepagecover.jpeg";
+
+const cover = fallbackHotelImage;
 
 const hotels = [
   {
-    name: "Aurelia Cove",
-    location: "Maldives",
-    price: "$360",
+    name: "Aravali Haveli",
+    location: "Jaipur, Rajasthan",
+    price: "₹12K",
     rating: "4.9",
     reviews: "312 reviews",
-    room: "Ocean Villa",
+    room: "Heritage Suite",
     guests: "2 guests",
     size: "820 sq.ft",
-    image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=700&q=70",
-    highlight: "A private lagoon-facing villa with soft interiors, a sunrise deck, and slow breakfast service.",
-    amenities: ["Private Pool", "Spa Access", "Sea View"],
+    image: "https://commons.wikimedia.org/wiki/Special:Redirect/file/1996%20-222-28%20Jaipur%20Hotel%20Rambagh%20Palace%20%282233403943%29.jpg?width=900",
+    highlight: "A peaceful haveli stay near the old city with Rajasthani interiors, courtyard dining, and easy access to local markets.",
+    amenities: ["Heritage Stay", "Local Breakfast", "City View"],
   },
   {
-    name: "Noir Ridge",
-    location: "Switzerland",
-    price: "$310",
+    name: "Marine Drive Vista",
+    location: "Mumbai, Maharashtra",
+    price: "₹15K",
     rating: "4.8",
     reviews: "246 reviews",
-    room: "Mountain Suite",
+    room: "Sea View Room",
     guests: "3 guests",
     size: "690 sq.ft",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=70",
-    highlight: "A warm alpine suite with peak views, fireplace evenings, and quiet trail access.",
-    amenities: ["Fireplace", "Peak View", "Breakfast"],
+    image: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Taj%20Mahal%20Palace%20Hotel.jpg?width=900",
+    highlight: "A modern city stay close to offices, cafes, and the seafront, ideal for business trips and weekend plans.",
+    amenities: ["Sea View", "Workspace", "Breakfast"],
   },
   {
-    name: "Casa Solene",
-    location: "Tuscany",
-    price: "$240",
+    name: "Nandi Urban Retreat",
+    location: "Bangalore, Karnataka",
+    price: "₹9.5K",
     rating: "4.7",
     reviews: "198 reviews",
-    room: "Countryside Stay",
+    room: "Business Studio",
     guests: "2 guests",
     size: "540 sq.ft",
-    image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=700&q=70",
-    highlight: "A vineyard-side stay made for golden evenings, rustic dining, and peaceful mornings.",
-    amenities: ["Vineyard", "Dining", "Garden"],
+    image: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Four%20Seasons%20Hotel%20Bangalore.jpg?width=900",
+    highlight: "A quiet urban studio with fast Wi-Fi, metro connectivity, and comfortable rooms for work or short city breaks.",
+    amenities: ["Fast Wi-Fi", "Metro Access", "Workspace"],
   },
 ];
 
 export default function Featured() {
   return (
-    <section className="relative px-6 py-24 md:px-12 lg:px-24 overflow-hidden">
+    <section id="hotels" className="relative scroll-mt-24 px-6 py-24 md:px-12 lg:px-24 overflow-hidden">
 
       <img
         src={cover}
+        alt="Indian city market and lifestyle"
         className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm scale-105"
       />
       <div className="absolute inset-0 bg-[#f3eee7]/90" />
@@ -57,11 +60,11 @@ export default function Featured() {
 
         <div className="mb-10 max-w-2xl">
           <p className="text-xs tracking-[0.3em] text-amber-700/80 uppercase font-semibold mb-3">
-            Curated Hotels
+            Curated Indian Hotels
           </p>
 
           <h2 className="text-4xl md:text-5xl font-bold leading-tight text-zinc-900">
-            Choose the stay that feels right first.
+            Comfortable stays in cities you know.
           </h2>
         </div>
 
@@ -75,6 +78,9 @@ export default function Featured() {
                 <img
                   src={h.image}
                   alt={h.name}
+                  onError={(event) => {
+                    event.currentTarget.src = fallbackHotelImage;
+                  }}
                   className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />

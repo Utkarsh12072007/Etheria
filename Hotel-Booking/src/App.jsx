@@ -11,8 +11,8 @@ function App() {
     setAuthOpen(false)
 
     setTimeout(() => {
-      if (href === "#about") {
-        document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })
+      if (href.startsWith("#") && href.length > 1) {
+        document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" })
         return
       }
 
