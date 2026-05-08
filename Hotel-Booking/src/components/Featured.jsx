@@ -123,7 +123,7 @@ export default function Featured() {
                 <div className="mt-5 flex justify-between items-center border-t pt-4 text-xs">
                   <span className="text-zinc-500">Free cancellation</span>
                   <button className="bg-zinc-950 text-white px-4 py-2 rounded-full transition hover:bg-amber-700 hover:-translate-y-0.5">
-                    View Details →
+                    View Details
                   </button>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function Featured() {
         </div>
 
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-[#f5efe6]" />
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-transparent to-[#eae2d5]" />
     </section>
-  );
+  )
 }

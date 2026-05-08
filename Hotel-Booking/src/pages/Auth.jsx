@@ -1,371 +1,189 @@
-import { useState } from "react";
-import { FiArrowLeft, FiCheckCircle, FiEye, FiEyeOff, FiLock, FiMail, FiUser, FiX } from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc";
+import { useEffect, useState } from "react";
+import { FiEye, FiEyeOff, FiLock, FiMail, FiUser, FiX } from "react-icons/fi";
 
-
-const premiumHotelImage =
-  "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=85";
+const Field = ({ icon: Icon, right, ...props }) => (
+  <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white/70 px-4 py-3 transition-all duration-200 focus-within:border-amber-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-100 focus-within:shadow-sm">
+    <Icon size={17} className="text-amber-700/70" />
+    <input
+      {...props}
+      className="w-full bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"/>
+    {right}
+  </div>
+);
 
 export default function Auth({ onClose }) {
-  const [mode, setMode] = useState("login");
-  const [authFields, setAuthFields] = useState({ name: "", email: "", password: "" });
-  const [authErrors, setAuthErrors] = useState({});
-  const [authSuccess, setAuthSuccess] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetError, setResetError] = useState("");
-  const isLogin = mode === "login";
-  const isForgot = mode === "forgot";
+  const [tab, setTab] = useState("login");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
 
-  const showLogin = () => {
-    setMode("login");
-    setAuthErrors({});
-    setAuthSuccess("");
-    setResetSent(false);
-    setResetEmail("");
-    setResetError("");
-  };
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  const updateAuthField = (field, value) => {
-    setAuthFields((current) => ({ ...current, [field]: value }));
-    setAuthErrors((current) => ({ ...current, [field]: "" }));
-    setAuthSuccess("");
-  };
+  const login = tab === "login";
 
-  const switchMode = (nextMode) => {
-    setMode(nextMode);
-    setAuthErrors({});
-    setAuthSuccess("");
-    setResetSent(false);
-    setResetError("");
-  };
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = "auto");
+  }, []);
 
-  const submitAuth = () => {
-    const email = authFields.email.trim();
-    const password = authFields.password.trim();
-    const name = authFields.name.trim();
-    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const nextErrors = {};
+  function change(e) {
+    setErr("");
 
-    if (!isLogin && !name) {
-      nextErrors.name = "Please enter your full name.";
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+
+    if (!form.email || !form.password || (!login && !form.name)) {
+      return setErr("Please fill all required fields.");
     }
 
-    if (!validEmail) {
-      nextErrors.email = "Please enter a valid email address.";
-    }
+    setLoading(true);
 
-    if (!password) {
-      nextErrors.password = "Please enter your password.";
-    } else if (!isLogin && password.length < 6) {
-      nextErrors.password = "Password must be at least 6 characters.";
-    }
+    await new Promise((r) => setTimeout(r, 800));
 
-    if (Object.keys(nextErrors).length > 0) {
-      setAuthErrors(nextErrors);
-      setAuthSuccess("");
-      return;
-    }
-
-    setAuthErrors({});
-    setAuthSuccess(isLogin ? "Logged in successfully." : "Account created successfully.");
-  };
-
-  const sendResetLink = () => {
-    const email = resetEmail.trim();
-    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-    if (!validEmail) {
-      setResetError("Please enter a valid email address.");
-      return;
-    }
-
-    setResetError("");
-    setResetSent(true);
-  };
-
-  const handleGoogleLogin = () => {
-    setAuthSuccess("Connecting to Google...");
-    setTimeout(() => {
-      setAuthSuccess("Logged in with Google successfully.");
-      setTimeout(() => {
-        onClose();
-      }, 1200);
-    }, 1500);
-  };
+    setLoading(false);
+    onClose?.();
+  }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center px-4 py-6 text-zinc-900 sm:px-6">
-
-      <button
-        type="button"
-        aria-label="Close login"
+    <div className="fixed inset-0 z-50 grid place-items-center px-4">
+      <div
         onClick={onClose}
-        className="absolute inset-0 bg-zinc-950/45 backdrop-blur-md animate-[fadeIn_180ms_ease-out]"
-      />
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"/>
 
-      <section className="relative z-10 grid h-[82vh] max-h-[640px] w-full max-w-5xl animate-[modalIn_260ms_ease-out] overflow-hidden rounded-2xl border border-white/70 bg-[#f6efe4]/90 shadow-[0_30px_90px_rgba(0,0,0,0.32)] backdrop-blur-2xl lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-amber-50 to-orange-100 shadow-2xl">
         <button
-          type="button"
-          aria-label="Close login"
           onClick={onClose}
-          className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/80 text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:text-zinc-950"
-        >
-          <FiX />
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-zinc-500 transition hover:bg-white hover:text-black hover:scale-110 active:scale-95">
+          <FiX size={16} />
         </button>
 
-        <div className="relative hidden min-h-full overflow-hidden bg-zinc-950 lg:block">
-          <img
-            src={premiumHotelImage}
-            alt="Premium hotel exterior"
-            className="absolute inset-0 h-full w-full object-cover opacity-70"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-10 text-white">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-amber-200">
-              ETHERIA
-            </p>
-            <p className="mt-4 text-sm leading-6 text-white/75">
-              Sign in to manage bookings, save favorite hotels, and unlock member-only stay offers.
-            </p>
+        <div className="relative p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+            Etheria
+          </p>
+
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-zinc-900">
+            {login ? "Welcome back" : "Create account"}
+          </h2>
+
+          <p className="mt-2 text-sm text-zinc-600">
+            {login ? "Sign in to continue." : "Create your account."}
+          </p>
+
+          <div className="relative mt-7 flex rounded-full bg-black/5 p-1">
+            <div
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-zinc-900 transition-all duration-300 ${
+                login ? "left-1" : "left-1/2"
+              }`}
+            />
+
+            {["login", "signup"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => {
+                  setTab(item);
+                  setErr("");
+                }}
+                className={`relative z-10 flex-1 rounded-full py-2.5 text-sm font-medium capitalize transition-colors duration-200 ${
+                  tab === item ? "text-white" : "text-zinc-600"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
           </div>
-        </div>
 
-        <div className="flex min-h-0 items-center justify-center overflow-y-auto px-6 py-7 sm:px-10">
-          <div className="w-full max-w-md">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-              {isForgot ? "Account recovery" : "Welcome"}
-            </p>
-            <h2 className="text-3xl font-semibold text-zinc-950">
-              {isForgot ? "Reset your password" : isLogin ? "Log in to Etheria" : "Create your account"}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600">
-              {isForgot
-                ? "Enter your email and we will send reset instructions for your Etheria account."
-                : isLogin
-                ? "Access your saved stays, upcoming trips, and booking details."
-                : "Join Etheria to book faster and keep every stay in one calm place."}
-            </p>
-
-            <div className={`mt-5 grid grid-cols-2 rounded-full border border-black/10 bg-black/5 p-1 ${isForgot ? "hidden" : ""}`}>
-              <button
-                onClick={showLogin}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  isLogin ? "bg-zinc-950 text-white shadow-md" : "text-zinc-600 hover:text-zinc-950"
-                }`}
-              >
-                Log in
-              </button>
-              <button
-                onClick={() => switchMode("signup")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  !isLogin ? "bg-zinc-950 text-white shadow-md" : "text-zinc-600 hover:text-zinc-950"
-                }`}
-              >
-                Sign up
-              </button>
-            </div>
-
-            {isForgot ? (
-              <form className="mt-5 space-y-4">
-                {resetSent ? (
-                  <div className="rounded-2xl border border-amber-700/20 bg-amber-50/80 px-5 py-5 text-center">
-                    <FiCheckCircle className="mx-auto text-3xl text-amber-700" />
-                    <p className="mt-3 text-sm font-semibold text-zinc-900">
-                      Reset link sent
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-zinc-600">
-                      Check your email for password reset instructions.
-                    </p>
-                  </div>
-                ) : (
-                  <label className="block">
-                    <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Email address
-                    </span>
-                    <span className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 px-4 py-3 transition focus-within:border-amber-700">
-                      <FiMail className="text-zinc-400" />
-                      <input
-                        type="email"
-                        placeholder="you@example.com"
-                        value={resetEmail}
-                        onChange={(event) => {
-                          setResetEmail(event.target.value);
-                          setResetError("");
-                        }}
-                        className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
-                      />
-                    </span>
-                    {resetError && (
-                      <span className="mt-2 block text-xs font-medium text-red-600">
-                        {resetError}
-                      </span>
-                    )}
-                  </label>
-                )}
-
-                <button
-                  type="button"
-                  onClick={sendResetLink}
-                  className={`w-full rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-amber-700 ${
-                    resetSent ? "hidden" : ""
-                  }`}
-                >
-                  Send reset link
-                </button>
-
-                <button
-                  type="button"
-                  onClick={showLogin}
-                  className="mx-auto flex items-center gap-2 text-sm font-semibold text-amber-700 transition hover:text-amber-800"
-                >
-                  <FiArrowLeft />
-                  Back to login
-                </button>
-              </form>
-            ) : (
-              <form className="mt-5 space-y-3">
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${!isLogin ? "max-h-[100px] opacity-100 mb-3" : "max-h-0 opacity-0 mb-0"}`}>
-                  <label className="block">
-                    <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Full name
-                    </span>
-                    <span className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 px-4 py-3 transition focus-within:border-amber-700">
-                      <FiUser className="text-zinc-400" />
-                      <input
-                        type="text"
-                        placeholder="Your name"
-                        value={authFields.name}
-                        onChange={(event) => updateAuthField("name", event.target.value)}
-                        className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
-                      />
-                    </span>
-                    {authErrors.name && (
-                      <span className="mt-2 block text-xs font-medium text-red-600">
-                        {authErrors.name}
-                      </span>
-                    )}
-                  </label>
-                </div>
-
-
-              <label className="block">
-                <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                  Email address
-                </span>
-                <span className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 px-4 py-3 transition focus-within:border-amber-700">
-                  <FiMail className="text-zinc-400" />
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={authFields.email}
-                    onChange={(event) => updateAuthField("email", event.target.value)}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
-                  />
-                </span>
-                {authErrors.email && (
-                  <span className="mt-2 block text-xs font-medium text-red-600">
-                    {authErrors.email}
-                  </span>
-                )}
-              </label>
-
-              <label className="block">
-                <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                  Password
-                </span>
-                <span className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 px-4 py-3 transition focus-within:border-amber-700">
-                  <FiLock className="text-zinc-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={authFields.password}
-                    onChange={(event) => updateAuthField("password", event.target.value)}
-                    className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
-                  />
-                  <button
-                    type="button"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    onClick={() => setShowPassword((current) => !current)}
-                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-zinc-400 transition hover:bg-black/5 hover:text-zinc-800"
-                  >
-                    {showPassword ? <FiEye /> : <FiEyeOff />}
-                  </button>
-                </span>
-                {authErrors.password && (
-                  <span className="mt-2 block text-xs font-medium text-red-600">
-                    {authErrors.password}
-                  </span>
-                )}
-              </label>
-
-              {isLogin && (
-                <div className="flex items-center justify-between text-sm">
-                  <label className="flex items-center gap-2 text-zinc-600">
-                    <input type="checkbox" className="h-4 w-4 accent-amber-700" />
-                    Remember me
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setMode("forgot")}
-                    className="font-semibold text-amber-700 hover:text-amber-800"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={submitAuth}
-                className="w-full rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:bg-amber-700"
-              >
-                {isLogin ? "Log in" : "Create account"}
-              </button>
-
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-black/10"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#f6efe4] px-2 text-zinc-500 font-medium">Or continue with</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="flex w-full items-center justify-center gap-3 rounded-full border border-black/10 bg-white/70 px-5 py-3 text-sm font-semibold text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
-              >
-                <FcGoogle className="text-xl" />
-                Google
-              </button>
-
-
-              {authSuccess && (
-                <p className="text-center text-xs font-semibold text-amber-700">
-                  {authSuccess}
-                </p>
-              )}
-              </form>
+          <form onSubmit={submit} className="mt-6 space-y-4">
+            {!login && (
+              <Field
+                icon={FiUser}
+                type="text"
+                name="name"
+                placeholder="Full name"
+                value={form.name}
+                onChange={change}
+              />
             )}
 
-            <p className={`mt-4 text-center text-sm text-zinc-600 ${isForgot ? "hidden" : ""}`}>
-              {isLogin ? "New to Etheria?" : "Already have an account?"}{" "}
-              <button
-                type="button"
-                  onClick={() => {
-                    switchMode(isLogin ? "signup" : "login");
-                  }}
-                className="font-semibold text-amber-700 hover:text-amber-800"
-              >
-                {isLogin ? "Sign up" : "Log in"}
-              </button>
-            </p>
-          </div>
+            <Field
+              icon={FiMail}
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={change}
+            />
+
+            <Field
+              icon={FiLock}
+              type={show ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={change}
+              right={
+                <button
+                  type="button"
+                  onClick={() => setShow(!show)}
+                  className="text-zinc-400 transition hover:text-zinc-700">
+                  {show ? <FiEyeOff size={17} /> : <FiEye size={17} />}
+                </button>
+              }
+            />
+
+            {login && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-amber-700 hover:text-amber-800">
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
+            {err && <p className="mt-3 text-sm font-medium text-red-500">{err}</p>}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex h-12 w-full items-center justify-center rounded-2xl bg-zinc-900 text-sm font-semibold text-white transition-all duration-200 hover:bg-amber-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:hover:bg-zinc-900 disabled:hover:shadow-none">
+              {loading ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              ) : login ? (
+                "Continue"
+              ) : (
+                "Create account"
+              )}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-zinc-600">
+            {login
+              ? "Don't have an account?"
+              : "Already have an account?"}
+
+            <button
+              onClick={() => {
+                setTab(login ? "signup" : "login");
+                setErr("");
+              }}
+              className="ml-1 font-semibold text-amber-700 hover:text-amber-800">
+              {login ? "Sign up" : "Log in"}
+            </button>
+          </p>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
