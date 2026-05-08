@@ -5,23 +5,24 @@ import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 
 function App() {
-  const [authOpen, setAuthOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const scrollTo = (href) => {
+    const id = href.replace("#", "")
+    if (id) {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+      return
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
 
   const showHome = (href = "#") => {
-    setAuthOpen(false)
-
-    setTimeout(() => {
-      if (href.startsWith("#") && href.length > 1) {
-        document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" })
-        return
-      }
-
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    }, 0)
+    setOpen(false)
+    scrollTo(href)
   }
 
   const showAuth = () => {
-    setAuthOpen(true)
+    setOpen(true)
   }
 
   return (
@@ -29,7 +30,7 @@ function App() {
       <Navbar onNavClick={showHome} onGetStarted={showAuth}/>
       <Home/>
       <Footer/>
-      {authOpen && <Auth onClose={() => setAuthOpen(false)}/>}
+      {open && <Auth onClose={() => setOpen(false)}/>}
     </>
   )
 }

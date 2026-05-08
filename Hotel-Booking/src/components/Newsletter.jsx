@@ -1,13 +1,13 @@
 export default function Newsletter() {
   return (
-    <section className="py-20 bg-gradient-to-b from-[#ddd2bf] to-[#d8bf9a]">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="pt-12 pb-30 bg-gradient-to-b from-[#ded2bf] to-[#d8bd96]">
+      <div className="max-w-7xl mx-auto px-6">
 
         <div className="relative rounded-2xl overflow-hidden bg-[#0B1F3A]/90 backdrop-blur-xl border border-white/10 shadow-xl">
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-          <div className="relative px-10 py-14 text-center text-white space-y-3">
+          <div className="relative px-10 py-18 text-center text-white space-y-3">
 
             <h3 className="text-3xl font-bold">Stay inspired</h3>
 

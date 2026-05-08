@@ -1,26 +1,15 @@
-import { useEffect, useRef } from "react";
-import posterImage from "../assets/homepagecover.jpeg";
-
-const bgvideo =
-  import.meta.env.VITE_HERO_VIDEO_URL ||
-  "https://res.cloudinary.com/dpg2clnkp/video/upload/f_mp4,vc_h264,q_auto,w_1600/v1777876033/bgvideo_compressed_1_xlpmav.mp4";
+import { useEffect, useRef } from "react"
+import posterImage from "../assets/homepagecover.jpeg"
+import bgvideo from "../assets/bgvideo.mp4"
 
 export default function Hero() {
   const videoRef = useRef(null);
 
   useEffect(() => {
     const video = videoRef.current;
-
     if (!video) return;
-
-    video.muted = true;
-    video.play().catch(() => {
-    });
+    video.play().catch(() => {});
   }, []);
-
-  const handleVideoReady = () => {
-    videoRef.current?.play().catch(() => {});
-  };
 
   return (
     <section className="relative min-h-screen overflow-hidden">
@@ -35,7 +24,6 @@ export default function Hero() {
         preload="auto"
         poster={posterImage}
         aria-hidden="true"
-        onCanPlay={handleVideoReady}
       >
         <source src={bgvideo} type="video/mp4" />
       </video>
@@ -72,5 +60,5 @@ export default function Hero() {
       </div>
 
     </section>
-  );
+  )
 }

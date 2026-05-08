@@ -9,9 +9,9 @@ export default function Home() {
     <div>
       <Hero/>
       <Featured/>
+      <Experience/>
       <About/>
       <Newsletter/>
-      <Experience/>
     </div>
   )
 }
